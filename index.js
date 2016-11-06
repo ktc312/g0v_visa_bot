@@ -83,6 +83,11 @@ app.post('/webhook/', function (req, res) {
                 answered = true;
                 continue
             }
+            if (text.includes('哈囉') || text.includes('嗨') || text.toLowerCase().includes('hi') || text.toLowerCase().includes('hello')){
+            	sendTextMessage(sender, "哈囉，你好！我是VISA BOT<3 我可以回答你簽證相關的問題唷～ 請使用你的簽證類別當作開頭，再說「我想問......」就可以了！例如「F1, 我想問OPT如何申請？」。 如果不知道要問些什麼，可以問我「你可以做什麼？」" );
+            	answered = true;
+                continue
+            }
             if (text.toLowerCase().includes('bye') || text.includes('謝')|| text.includes('掰') ){
             	sendTextMessage(sender,"謝謝你！下次還有關於簽證的問題，歡迎再來找我唷<3");
                 answered = true;
@@ -96,7 +101,6 @@ app.post('/webhook/', function (req, res) {
             else{
             	sendTextMessage(sender, "我不太清楚你在說什麼哦～ 請先告訴我你想問的簽證類別，再說「我想問......」就可以了！例如「OPT, 我想問什麼是OPT？」，或輸入「幫助」。 如果不知道要問些什麼，可以問我「你可以做什麼？」");
             }
-            sendTextMessage(sender, "哈囉，你好！我是VISA BOT<3 我可以回答你簽證相關的問題唷～ 請使用你的簽證類別當作開頭，再說「我想問......」就可以了！例如「F1, 我想問OPT如何申請？」。 如果不知道要問些什麼，可以問我「你可以做什麼？」" )
         }
     }
     res.sendStatus(200)
