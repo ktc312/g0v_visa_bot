@@ -38,6 +38,10 @@ app.post('/webhook/', function (req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
+            if (text === 'test') {
+                sendTextMessage(sender,"謝謝你！下次還有關於簽證的問題，歡迎再來找我唷<3")
+                continue
+            }
             sendTextMessage(sender, "哈囉，你好！我是VISA BOT<3 我可以回答你簽證相關的問題唷～ 請使用你的簽證類別當作開頭，再說「我想問......」就可以了！例如「F1, 我想問OPT如何申請？」。 如果不知道要問些什麼，可以問我「你可以做什麼？」" )
         }
     }
