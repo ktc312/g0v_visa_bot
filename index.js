@@ -71,7 +71,8 @@ function CSVToArray( strData, strDelimiter ){
 app.post('/webhook/', function (req, res) {
     var pathname = window.location.pathname; 
     console.log(pathname);
-    let answers_list = CSVToArray(..\visa_bot_questions_list.csv,',')
+    answer_file = pathname + 'visa_bot_questions_list.csv';
+    let answers_list = CSVToArray(answer_file,',')
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
