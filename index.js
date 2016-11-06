@@ -31,7 +31,45 @@ app.listen(app.get('port'), function() {
     console.log('running on port', app.get('port'))
 })
 
+function CSVToArray( strData, strDelimiter ){
+	strDelimiter = (strDelimiter || ",");
+        var objPattern = new RegExp(
+            (
+                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+                "([^\"\\" + strDelimiter + "\\r\\n]*))"
+            ),
+            "gi"
+            );
+        var arrData = [[]];
+
+        var arrMatches = null;
+        while (arrMatches = objPattern.exec( strData )){
+            var strMatchedDelimiter = arrMatches[ 1 ];
+
+            if (
+                strMatchedDelimiter.length &&
+                (strMatchedDelimiter != strDelimiter)
+                ){
+                arrData.push( [] );
+            }
+            if (arrMatches[ 2 ]){
+                var strMatchedValue = arrMatches[ 2 ].replace(
+                    new RegExp( "\"\"", "g" ),
+                    "\""
+                    );
+            } else {
+                var strMatchedValue = arrMatches[ 3 ];
+            }
+            arrData[ arrData.length - 1 ].push( strMatchedValue );
+        }
+        return( arrData );
+    }
+
+
+
 app.post('/webhook/', function (req, res) {
+    let answers_list = CSVToArray(../visa_bot_questions_list.csv,',')
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
@@ -39,7 +77,7 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
             let text = event.message.text
             if (text === 'test') {
-                sendTextMessage(sender,"謝謝你！下次還有關於簽證的問題，歡迎再來找我唷<3")
+                sendTextMessage(sender,answers_list.slice(1, 1))
                 continue
             }
             sendTextMessage(sender, "哈囉，你好！我是VISA BOT<3 我可以回答你簽證相關的問題唷～ 請使用你的簽證類別當作開頭，再說「我想問......」就可以了！例如「F1, 我想問OPT如何申請？」。 如果不知道要問些什麼，可以問我「你可以做什麼？」" )
