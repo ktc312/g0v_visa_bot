@@ -69,8 +69,9 @@ function CSVToArray( strData, strDelimiter ){
 
 
 app.post('/webhook/', function (req, res) {
-    var test = "'string, duppi, du', 23, lala";
+    var test = " test1, test2, test3, test4";
     var answers_list = CSVToArray(test,',')
+    let answered = false;
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
         let event = req.body.entry[0].messaging[i]
@@ -78,14 +79,24 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
             let text = event.message.text
             if (text === 'test') {
-                sendTextMessage(sender,answers_list.toString())
+                sendTextMessage(sender,answers_list.toString());
+                answered = true;
                 continue
             }
             if (text.toLowerCase().includes('bye') || text.includes('謝')|| text.includes('掰') ){
-            	sendTextMessage(sender,"謝謝你！下次還有關於簽證的問題，歡迎再來找我唷<3")
+            	sendTextMessage(sender,"謝謝你！下次還有關於簽證的問題，歡迎再來找我唷<3");
+                answered = true;
                 continue
             }
+            if (text.includes('你可以做什麼')){
+            	sendTextMessage(sender, "我知道各式各樣關於簽證的問題，想知道關於OPT的資訊嗎？你可以試試看對我說「我想問OPT」，或是其他簽證類別，像是F1、F2、J1、J2、M1、M2、H1B等等，我會盡力找資料給你哦～");
+            	answered = true;
+            	continue
+            }
             sendTextMessage(sender, "哈囉，你好！我是VISA BOT<3 我可以回答你簽證相關的問題唷～ 請使用你的簽證類別當作開頭，再說「我想問......」就可以了！例如「F1, 我想問OPT如何申請？」。 如果不知道要問些什麼，可以問我「你可以做什麼？」" )
+        }
+        if(!answered){
+             sendTextMessage(sender, "我不太清楚你在說什麼哦～ 請先告訴我你想問的簽證類別，再說「我想問......」就可以了！例如「OPT, 我想問什麼是OPT？」，或輸入「幫助」。 如果不知道要問些什麼，可以問我「你可以做什麼？」");
         }
     }
     res.sendStatus(200)
