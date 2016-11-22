@@ -116,7 +116,7 @@ function sendTextMessage(sender, text) {
 
 // Our bot actions
 const actions = {
-  send(sender, message) {
+  send: send = (sender, message) => {
 
     const { sessionID } = sender;
     const { text } = message;
@@ -142,7 +142,7 @@ const actions = {
       // Giving the wheel back to our bot
       return Promise.resolve()
     }
-  },
+  }
   // You should implement your custom actions here
   // See https://wit.ai/docs/quickstart
 };
