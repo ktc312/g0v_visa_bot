@@ -96,10 +96,14 @@ const findOrCreateSession = (fbid) => {
   return sessionId;
 };
 
-const fbMessage = (id, text) => {
+const fbMessage = (id, text, quickReplies) => {
+  console.log(quickReplies);
   const body = JSON.stringify({
     recipient: { id },
-    message: { text },
+    message: { 
+        text, 
+        quick_replies: []
+    },
   });
   const qs = 'access_token=' + encodeURIComponent(token);
   return fetch('https://graph.facebook.com/me/messages?' + qs, {
@@ -122,6 +126,7 @@ const actions = {
 
     const sessionId = sender.sessionId;
     const text = message.text;
+    const quickReplies = message.quickreplies;
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
     const recipientId = sessions[sessionId].fbid;
@@ -129,7 +134,7 @@ const actions = {
       // Yay, we found our recipient!
       // Let's forward our bot response to her.
       // We return a promise to let our bot know when we're done sending
-      return fbMessage(recipientId, text)
+      return fbMessage(recipientId, text, quickReplies)
       .then(() => null)
       .catch((err) => {
         console.error(
