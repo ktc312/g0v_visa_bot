@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const fetch = require('node-fetch');
 const request = require('request');
 const app = express();
 const Wit = require('node-wit').Wit;
@@ -95,24 +96,25 @@ const findOrCreateSession = (fbid) => {
   return sessionId;
 };
 
-function sendTextMessage(sender, text) {
-    let messageData = { text:text }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:token},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            message: messageData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending messages: ', error)
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error)
-        }
-    })
-}
+const fbMessage = (id, text) => {
+  const body = JSON.stringify({
+    recipient: { id },
+    message: { text },
+  });
+  const qs = 'access_token=' + encodeURIComponent(FB_PAGE_TOKEN);
+  return fetch('https://graph.facebook.com/me/messages?' + qs, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body,
+  })
+  .then(rsp => rsp.json())
+  .then(json => {
+    if (json.error && json.error.message) {
+      throw new Error(json.error.message);
+    }
+    return json;
+  });
+};
 
 // Our bot actions
 const actions = {
@@ -127,7 +129,7 @@ const actions = {
       // Yay, we found our recipient!
       // Let's forward our bot response to her.
       // We return a promise to let our bot know when we're done sending
-      return sendTextMessage(recipientId, text)
+      return fbMessage(recipientId, text)
       .then(() => null)
       .catch((err) => {
         console.error(
@@ -175,7 +177,7 @@ app.post('/webhook/', function (req, res) {
             if (attachments) {
                 // We received an attachment
                 // Let's reply with an automatic message
-                sendTextMessage(sender, 'Sorry I can only process text messages for now.')
+                fbMessage(sender, 'Sorry I can only process text messages for now.')
                 .catch(console.error);
               } else if (text) {
                 // We received a text message
