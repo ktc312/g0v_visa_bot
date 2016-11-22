@@ -97,12 +97,18 @@ const findOrCreateSession = (fbid) => {
 };
 
 const fbMessage = (id, text, quickReplies) => {
-  console.log(quickReplies);
+  const quickRepliesFormatted = quickReplies.map(reply => (
+      {
+        "content_type": "text",
+        "title": reply,
+        "payload": reply
+      }
+  ));
   const body = JSON.stringify({
     recipient: { id },
     message: { 
         text, 
-        quick_replies: []
+        quick_replies: quickRepliesFormatted
     },
   });
   const qs = 'access_token=' + encodeURIComponent(token);
