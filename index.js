@@ -118,7 +118,7 @@ function sendTextMessage(sender, text) {
 const actions = {
   send(sender, message) {
 
-    const sessionID = sender.sessionID;
+    const sessionId = sender.sessionId;
     const text = message.text;
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
