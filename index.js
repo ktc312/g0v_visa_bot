@@ -118,8 +118,8 @@ function sendTextMessage(sender, text) {
 const actions = {
   send: send = (sender, message) => {
 
-    const { sessionID } = sender;
-    const { text } = message;
+    const sessionID = sender.sessionID;
+    const text = message.text;
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
     const recipientId = sessions[sessionId].fbid;
@@ -169,7 +169,8 @@ app.post('/webhook/', function (req, res) {
             const sessionId = findOrCreateSession(sender);
 
             // We retrieve the message content
-            const {text, attachments} = event.message;
+            const text = event.message.text;
+            const attachments = event.message.attachments;
 
             if (attachments) {
                 // We received an attachment
