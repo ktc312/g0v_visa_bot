@@ -116,7 +116,7 @@ function sendTextMessage(sender, text) {
 
 // Our bot actions
 const actions = {
-  send: send = (sender, message) => {
+  send(sender, message) {
 
     const sessionID = sender.sessionID;
     const text = message.text;
